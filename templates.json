@@ -1,0 +1,41 @@
+[
+    {
+        "value": "Hug for $reciever",
+        "entities": [
+            {
+                "type": "mention",
+                "index": {
+                    "start": 8,
+                    "end": -1
+                },
+                "value": ""
+            }
+        ]
+    },
+    {
+        "value": "$reciever *Hug*",
+        "entities": [
+            {
+                "type": "mention",
+                "index": {
+                    "start": 0,
+                    "end": -1
+                },
+                "value": ""
+            }
+        ]
+    },
+    {
+        "value": "$reciever *Big Hug*",
+        "entities": [
+            {
+                "type": "mention",
+                "index": {
+                    "start": 0,
+                    "end": -1
+                },
+                "value": ""
+            }
+        ]
+    }
+]
