@@ -61,26 +61,25 @@ def init_client() -> Client:
     return client
 
 
-def get_handles(client: Client):
-    latest = (
-        open(os.path.join(BASE, "latest.txt"), "r", encoding="UTF-8").read().strip()
-    )
-    now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-    print(now, file=open(os.path.join(BASE, "latest.txt"), "w", encoding="UTF-8"))
-    logger.info(f"Searching since {latest}")
+def get_handles(client: Client, cursor: str = None):
+    latest = open(os.path.join(BASE, "latest.txt"), "r").read().strip()
     r = client.app.bsky.feed.search_posts(
         {
             "q": "#ineedahug",
             "tag": ["ineedahug"],
             "sort": "latest",
             "limit": 100,
-            "since": latest,
+            "cursor": cursor
         }
     )
     data = json.loads(r.model_dump_json())
+    new_cursor = data["cursor"]
+    print(data["posts"][0]["cid"], file=open(os.path.join(BASE, "latest.txt"), "w"))
     for post in data["posts"]:
+        if post["cid"] == latest:
+            return
         yield (post["author"]["did"], post["author"]["handle"])
-
+    return get_handles(client, new_cursor)
 
 def generate_post(handle, did):
     logger.info(f"Sending hug to: {handle}")
@@ -105,4 +104,5 @@ if __name__ == "__main__":
     client = init_client()
     for did, handle in get_handles(client):
         text, facets = generate_post(handle, did)
+        print(handle, did)
         client.send_post(text, facets=facets)
