@@ -23,7 +23,7 @@ load_dotenv()
 BASE = os.path.dirname(os.path.realpath(__file__))
 templates = json.load(open(os.path.join(BASE, "templates.json"), "r", encoding="UTF-8"))
 session_file_path = os.path.join(BASE, "session.txt")
-
+healthchecks_url = os.getenv("HEALTHCHECKS_ENDPOINT")
 
 def get_session() -> Optional[str]:
     try:
@@ -106,3 +106,5 @@ if __name__ == "__main__":
         text, facets = generate_post(handle, did)
         print(handle, did)
         client.send_post(text, facets=facets)
+    if healthchecks_url:
+        os.system(f"curl -s --get {healthchecks_url} > /dev/null")
